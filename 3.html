@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Personal biography</title>
+    <style>
+        body {
+            background-color: aqua;
+        }
+        h1 {
+            color: red;
+        }
+
+        h2 {
+            color: green;
+        }
+        form {
+            margin-top: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+         input[type="text"], input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        } 
+
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+    </style>
+</head>
+
+    <h1>My self</h1>
+    <h2>About Me</h2><p>My name is gaurav chawla. I am 21 yers old. Currently i am persuing my b.e cse from chitkara university punjab. I am well versed in many programing languages.</p>
+    <h2>Hobbies</h2><p>My hobies include playing cricket and also love to do travelling and explore new new things.</p>
+    <h2>Contact Information</h2> 
+<form>
+    <label for="name">Your Name:</label>
+    <input type="text" id="name" name="name" placeholder="Enter your name" required>
+
+    <label for="email">Your Email:</label>
+    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+
+    <input type="submit" value="Submit">
+</form>
+</body>
+</html>
