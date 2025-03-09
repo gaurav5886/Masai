@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Gallery</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        section {
+            background: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+
+        img {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        a {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Image Gallery</h2>
+
+    <div class="gallery">
+        <section>
+            <img src="https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0" alt="Beautiful Mountain Landscape">
+            <a href="https://en.wikipedia.org/wiki/Mountain" target="_blank">Learn More about Mountains</a>
+        </section>
+
+        <section>
+            <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e" alt="Serene Beach View">
+            <a href="https://en.wikipedia.org/wiki/Beach" target="_blank">View Details about Beaches</a>
+        </section>
+
+        <section>
+            <img src="https://images.unsplash.com/photo-1473773508845-188df298d2d1" alt="Lone Tree in Sunset">
+            <a href="https://en.wikipedia.org/wiki/Tree" target="_blank">Explore More about Trees</a>
+        </section>
+    </div>
+
+</body>
+</html>
