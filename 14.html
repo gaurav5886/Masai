@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+nav {
+    background-color: #333;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+nav a {
+    text-decoration: none;
+    color: white;
+    padding: 8px 12px;
+    display: inline-block;
+}
+
+.section1 a {
+    color: lightblue;
+}
+
+.section1 a:hover {
+    color: deepskyblue;
+}
+
+.section2 a {
+    color: lightgreen;
+}
+
+.section2 a:hover {
+    color: green;
+}
+
+.section3 a {
+    color: lightcoral;
+}
+
+.section3 a:hover {
+    color: crimson;
+}
+
+a[href^="https"] {
+    color: gold;
+}
+
+@media (max-width: 600px) {
+    nav {
+        flex-direction: column;
+        text-align: center;
+    }
+    nav a {
+        display: block;
+        margin: 5px 0;
+    }
+}
+
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="section1">
+            <a href="https://example.com">Home</a>
+            <a href="/about">About</a>
+            <a href="https://blog.com">Blog</a>
+        </div>
+        <div class="section2">
+            <a href="/services">Services</a>
+            <a href="/contact">Contact</a>
+        </div>
+        <div class="section3">
+            <a href="https://github.com">GitHub</a>
+            <a href="/portfolio">Portfolio</a>
+            <a href="/careers">Careers</a>
+        </div>
+    </nav>
+    
+    
+</body>
+</html>
