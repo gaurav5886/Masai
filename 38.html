@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Responsive Image Gallery</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background-color: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .gallery {
+      display: flex;
+      gap: 20px;
+      padding: 20px;
+      border: 2px solid #555;
+      max-width: 800px;
+      width: 90%;
+    }
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      flex: 2;
+    }
+    .grid-container img {
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #555;
+    }
+    .side-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex: 1;
+    }
+    .side-container img {
+      width: 100%;
+      aspect-ratio: 2.5;
+      object-fit: cover;
+      border: 2px solid #555;
+    }
+    @media (max-width: 600px) {
+      .gallery {
+        flex-direction: column;
+        align-items: center;
+      }
+      .grid-container {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="gallery">
+    <div class="grid-container">
+      <img src="https://picsum.photos/100" alt="Circle">
+      <img src="https://picsum.photos/101" alt="Circle">
+      <img src="https://picsum.photos/102" alt="Circle">
+      <img src="https://picsum.photos/103" alt="Circle">
+      <img src="https://picsum.photos/104" alt="Circle">
+      <img src="https://picsum.photos/105" alt="Circle">
+      <img src="https://picsum.photos/106" alt="Circle">
+      <img src="https://picsum.photos/107" alt="Circle">
+      <img src="https://picsum.photos/108" alt="Circle">
+    </div>
+    <div class="side-container">
+      <img src="https://picsum.photos/300/100" alt="Rectangle">
+      <img src="https://picsum.photos/301/100" alt="Rectangle">
+      <img src="https://picsum.photos/302/100" alt="Rectangle">
+      <img src="https://picsum.photos/303/100" alt="Rectangle">
+    </div>
+  </div>
+</body>
+</html>

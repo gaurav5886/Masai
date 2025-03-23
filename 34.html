@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #ffd700;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .row {
+            display: flex;
+            border: 1px solid black;
+            background-color: #f0f0f0;
+        }
+
+        .image {
+            width: 150px;
+            height: 100px;
+            background-color: #3498db;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 14px;
+            margin: 10px;
+        }
+
+        .content {
+            flex: 1;
+            padding: 10px;
+        }
+
+        .title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .text {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .read-more {
+            color: #3498db;
+            font-size: 14px;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .row {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .image {
+                width: 100%;
+                height: 120px;
+                margin: 0;
+                margin-bottom: 10px;
+            }
+
+            .content {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+ 
+        <div class="row">
+            <div class="image">Image</div>
+            <div class="content">
+                <div class="title">Title</div>
+                <div class="text">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vero deleniti incidunt rem. Voluptate, tempore quos, suscipit temporibus autem sapiente.
+                </div>
+                <div class="read-more">Read more</div>
+            </div>
+        </div>
+
+     
+        <div class="row">
+            <div class="image">Image</div>
+            <div class="content">
+                <div class="title">Title</div>
+                <div class="text">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vero deleniti incidunt rem. Voluptate, tempore quos, suscipit temporibus autem sapiente.
+                </div>
+                <div class="read-more">Read more</div>
+            </div>
+        </div>
+
+       
+        <div class="row">
+            <div class="image">Image</div>
+            <div class="content">
+                <div class="title">Title</div>
+                <div class="text">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vero deleniti incidunt rem. Voluptate, tempore quos, suscipit temporibus autem sapiente.
+                </div>
+                <div class="read-more">Read more</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="image">Image</div>
+            <div class="content">
+                <div class="title">Title</div>
+                <div class="text">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vero deleniti incidunt rem. Voluptate, tempore quos, suscipit temporibus autem sapiente.
+                </div>
+                <div class="read-more">Read more</div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
