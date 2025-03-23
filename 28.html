@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Card Layout</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: #f8f8f8;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        .card-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card img {
+            width: 100%;
+            border-radius: 10px;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .card h2 {
+            margin: 10px 0;
+        }
+
+        .card p {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .card button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+
+        .card button:hover {
+            background: #0056b3;
+        }
+
+        @media (min-width: 600px) {
+            .card-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .card-container {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Responsive Card Layout</h1>
+
+    <div class="card-container">
+        <div class="card">
+            <img src="https://source.unsplash.com/300x200/?nature" alt="Nature">
+            <h2>Card Title 1</h2>
+            <p>Short description about the content of this card.</p>
+            <button>Read More</button>
+        </div>
+
+        <div class="card">
+            <img src="https://source.unsplash.com/300x200/?technology" alt="Technology">
+            <h2>Card Title 2</h2>
+            <p>Short description about the content of this card.</p>
+            <button>Read More</button>
+        </div>
+
+        <div class="card">
+            <img src="https://source.unsplash.com/300x200/?city" alt="City">
+            <h2>Card Title 3</h2>
+            <p>Short description about the content of this card.</p>
+            <button>Read More</button>
+        </div>
+
+        <div class="card">
+            <img src="https://source.unsplash.com/300x200/?travel" alt="Travel">
+            <h2>Card Title 4</h2>
+            <p>Short description about the content of this card.</p>
+            <button>Read More</button>
+        </div>
+    </div>
+
+</body>
+</html>

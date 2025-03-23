@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fixing Poor Readability</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            line-height: 1.5;
+            font-size: 14px; /* Default for mobile-first approach */
+        }
+
+        h1 {
+            font-size: 20px;
+        }
+
+        p {
+            margin-bottom: 10px;
+        }
+
+        @media (min-width: 600px) {
+            body {
+                font-size: 16px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Improving Readability</h1>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum scelerisque sapien non justo laoreet, et consequat justo accumsan.</p>
+    <p>Phasellus ultrices turpis vel nulla tristique, id fermentum dolor feugiat. Morbi tempor justo at diam cursus, in facilisis urna molestie.</p>
+</body>
+</html>
