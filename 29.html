@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #5ec6e3;
+            margin: 0;
+        }
+
+        .keyboard {
+            display: grid;
+            grid-template-columns: repeat(12, 50px);
+            grid-template-rows: repeat(5, 50px);
+            gap: 5px;
+            background-color: #1f1f1f;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .key {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #2a2a2a;
+            color: #76c7c0;
+            border-radius: 5px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            box-shadow: inset 0 -2px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .delete {
+            grid-column: span 2;
+            background-color: #d9534f;
+        }
+
+        .tab {
+            grid-column: span 1.5;
+        }
+
+        .caps {
+            grid-column: span 2;
+        }
+
+        .enter {
+            grid-column: span 2;
+            background-color: #5bc0de;
+        }
+
+        .shift {
+            grid-column: span 2.5;
+            background-color: #f0ad4e;
+        }
+
+        .space {
+            grid-column: span 6;
+            background-color: #5bc0de;
+        }
+
+        .control, .option, .alt, .arrow {
+            background-color: #4caf50;
+            grid-column: span 1.5;
+        }
+
+        .arrow {
+            text-align: center;
+            background-color: #5bc0de;
+        }
+    </style>
+</head>
+<body>
+    <div class="keyboard">
+        <div class="key">~</div>
+        <div class="key">1</div>
+        <div class="key">2</div>
+        <div class="key">3</div>
+        <div class="key">4</div>
+        <div class="key">5</div>
+        <div class="key">6</div>
+        <div class="key">7</div>
+        <div class="key">8</div>
+        <div class="key">9</div>
+        <div class="key">0</div>
+        <div class="key delete">Delete</div>
+
+        <div class="key tab">tab</div>
+        <div class="key">Q</div>
+        <div class="key">W</div>
+        <div class="key">E</div>
+        <div class="key">R</div>
+        <div class="key">T</div>
+        <div class="key">Y</div>
+        <div class="key">U</div>
+        <div class="key">I</div>
+        <div class="key">O</div>
+        <div class="key">P</div>
+        <div class="key">\</div>
+
+        <div class="key caps">caps</div>
+        <div class="key">A</div>
+        <div class="key">S</div>
+        <div class="key">D</div>
+        <div class="key">F</div>
+        <div class="key">G</div>
+        <div class="key">H</div>
+        <div class="key">J</div>
+        <div class="key">K</div>
+        <div class="key">L</div>
+        <div class="key enter">Enter</div>
+
+        <div class="key shift">shift</div>
+        <div class="key">Z</div>
+        <div class="key">X</div>
+        <div class="key">C</div>
+        <div class="key">V</div>
+        <div class="key">B</div>
+        <div class="key">N</div>
+        <div class="key">M</div>
+        <div class="key">,</div>
+        <div class="key">.</div>
+        <div class="key shift">shift</div>
+
+        <div class="key control">control</div>
+        <div class="key option">option</div>
+        <div class="key alt">alt</div>
+        <div class="key space">space</div>
+        <div class="key alt">alt</div>
+        <div class="key option">option</div>
+        <div class="key arrow">➡️</div>
+    </div>
+</body>
+</html>
