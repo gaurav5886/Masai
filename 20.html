@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Display Properties</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+        }
+
+        /* Block Element */
+        .block-element {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            border: 2px solid black;
+            background-color: lightblue;
+            margin: 10px 0;
+        }
+
+        /* Inline Element */
+        .inline-element {
+            display: inline;
+            background-color: lightgreen;
+            padding: 5px;
+            border: 1px solid darkgreen;
+        }
+
+        /* Inline-Block Element */
+        .inline-block-element {
+            display: inline-block;
+            width: 150px;
+            padding: 10px;
+            border: 2px solid brown;
+            background-color: lightcoral;
+            margin: 10px;
+        }
+
+        /* Initially Hidden Element */
+        .hidden-element {
+            display: none;
+            padding: 15px;
+            border: 2px dashed red;
+            background-color: lightgray;
+            margin-top: 10px;
+        }
+
+        /* Button Style */
+        .toggle-btn {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: darkblue;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Mastering CSS Display Properties</h1>
+
+        <div class="block-element">I am a Block Element (Takes full width)</div>
+
+        <span class="inline-element">I am an Inline Element (Fits in text flow)</span>
+
+        <div class="inline-block-element">I am an Inline-Block Element</div>
+
+        <div id="hidden-element" class="hidden-element">I was hidden, now I'm visible!</div>
+
+        <button class="toggle-btn" onclick="toggleVisibility()">Toggle Hidden Element</button>
+    </div>
+
+    <script>
+        function toggleVisibility() {
+            var hiddenElement = document.getElementById("hidden-element");
+            if (hiddenElement.style.display === "none") {
+                hiddenElement.style.display = "block";
+            } else {
+                hiddenElement.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>

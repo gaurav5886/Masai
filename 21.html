@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sticky Header & Fixed Footer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Sticky Header */
+        .header {
+            background-color: darkblue;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        /* Main Content */
+        .content {
+            padding: 20px;
+            margin-bottom: 60px; /* Space for footer */
+        }
+
+        .content p {
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        /* Fixed Footer */
+        .footer {
+            background-color: black;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 18px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        Sticky Header - Always Visible at the Top
+    </div>
+
+    <div class="content">
+        <h2>Scroll Down to See the Sticky Effect</h2>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vel velit at turpis vehicula fringilla.</p>
+        <p>Curabitur lacinia justo non libero venenatis, ac varius felis vulputate.</p>
+        <p>Praesent bibendum lacus vel sapien feugiat, eget fermentum lectus convallis.</p>
+        <p>Vestibulum ut magna at lacus tristique condimentum. Nulla facilisi.</p>
+        <p>Phasellus nec neque id nunc feugiat aliquet eget id quam.</p>
+        <p>Nam sodales orci non eros cursus, non hendrerit metus feugiat.</p>
+        <p>Integer in arcu nec libero suscipit hendrerit sed nec lorem.</p>
+        <p>Aliquam erat volutpat. Cras interdum sapien non ligula rhoncus, eget ornare lacus viverra.</p>
+        <p>Maecenas vitae dolor eget enim tempus fermentum ac eget lectus.</p>
+        <p>Duis imperdiet purus sed dolor interdum, id venenatis ligula fermentum.</p>
+    </div>
+
+    <div class="footer">
+        Fixed Footer - Always Stays at the Bottom
+    </div>
+
+</body>
+</html>
