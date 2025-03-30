@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creating and Removing Elements</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        #container {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            min-height: 100px;
+        }
+        button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Dynamic Paragraphs</h2>
+    
+    <button onclick="addParagraph()">Add Paragraph</button>
+    <button onclick="removeLastParagraph()">Remove Last Paragraph</button>
+
+    <div id="container"></div>
+
+    <script>
+        function addParagraph() {
+            let container = document.getElementById("container");
+            let p = document.createElement("p");
+            p.textContent = "This is a new paragraph.";
+            container.appendChild(p);
+        }
+
+        function removeLastParagraph() {
+            let container = document.getElementById("container");
+            if (container.lastChild) {
+                container.removeChild(container.lastChild);
+            }
+        }
+    </script>
+
+</body>
+</html>
