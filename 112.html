@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dynamic Theme Selector</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; transition: background-color 0.5s, color 0.5s; }
+        select { padding: 10px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Dynamic Theme Selector</h1>
+    <label for="theme-selector">Select Theme:</label>
+    <select id="theme-selector" onchange="applyTheme()">
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+        <option value="blue">Blue</option>
+    </select>
+
+    <script>
+        window.onload = function() {
+            const savedTheme = sessionStorage.getItem("selectedTheme");
+            document.getElementById("theme-selector").value = savedTheme || "light";
+            applyTheme();
+        }
+
+        function applyTheme() {
+            const theme = document.getElementById("theme-selector").value;
+            sessionStorage.setItem("selectedTheme", theme);
+
+            if (theme === "light") {
+                document.body.style.backgroundColor = "#ffffff";
+                document.body.style.color = "#000000";
+            } else if (theme === "dark") {
+                document.body.style.backgroundColor = "#333333";
+                document.body.style.color = "#ffffff";
+            } else if (theme === "blue") {
+                document.body.style.backgroundColor = "#007acc";
+                document.body.style.color = "#ffffff";
+            }
+        }
+    </script>
+</body>
+</html>

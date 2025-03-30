@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Save and Load Notes</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        textarea { width: 100%; height: 200px; margin-bottom: 10px; }
+        button { padding: 10px; margin-right: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Save and Load Notes</h1>
+    <textarea id="notes" placeholder="Enter your notes here..."></textarea>
+    <br>
+    <button onclick="saveNotes()">Save Notes</button>
+    <button onclick="loadNotes()">Load Notes</button>
+    <button onclick="clearNotes()">Clear Notes</button>
+
+    <script>
+        window.onload = function() {
+            loadNotes();
+        }
+
+        function saveNotes() {
+            const notes = document.getElementById("notes").value;
+            if (notes.trim() === "") {
+                alert("Cannot save empty notes!");
+                return;
+            }
+            localStorage.setItem("userNotes", notes);
+            alert("Notes saved successfully!");
+        }
+
+        function loadNotes() {
+            const savedNotes = localStorage.getItem("userNotes");
+            document.getElementById("notes").value = savedNotes || "";
+        }
+
+        function clearNotes() {
+            localStorage.removeItem("userNotes");
+            document.getElementById("notes").value = "";
+            alert("Notes cleared!");
+        }
+    </script>
+</body>
+</html>
