@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Fetch App</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        input, button { padding: 10px; margin: 5px 0; }
+        #weather { margin-top: 20px; font-weight: bold; }
+        #error-message { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Weather Fetch App</h1>
+    <form id="weatherForm">
+        <label for="city">Enter City Name:</label>
+        <input type="text" id="city" required>
+        <button type="submit">Get Weather</button>
+    </form>
+
+    <div id="error-message"></div>
+    <div id="weather"></div>
+
+    <script>
+        const weatherForm = document.getElementById('weatherForm');
+        const cityInput = document.getElementById('city');
+        const weatherDisplay = document.getElementById('weather');
+        const errorMessage = document.getElementById('error-message');
+
+        weatherForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const city = cityInput.value.trim();
+            if (!city) {
+                errorMessage.textContent = 'City name cannot be empty';
+                weatherDisplay.textContent = '';
+                return;
+            }
+            fetchWeather(city);
+        });
+
+        async function fetchWeather(city) {
+            try {
+                const apiKey = 'YOUR_API_KEY'; // Replace with your OpenWeather API key
+                const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('City not found');
+                const data = await response.json();
+                errorMessage.textContent = '';
+                weatherDisplay.textContent = `Temperature in ${data.name}: ${data.main.temp}°C, ${data.weather[0].description}`;
+            } catch (error) {
+                errorMessage.textContent = error.message;
+                weatherDisplay.textContent = '';
+            }
+        }
+    </script>
+</body>
+</html>
