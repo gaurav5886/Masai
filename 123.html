@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: white;
+            color: black;
+            margin: 20px;
+        }
+        h1, h2 {
+            text-align: center;
+            color: darkblue;
+        }
+        #userListContainer {
+            margin-top: 20px;
+            border: 1px solid silver;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: lightgray;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid gray;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: gainsboro;
+            color: darkslategray;
+        }
+        #addUserForm {
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px solid silver;
+            border-radius: 5px;
+            background-color: lightcyan;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: darkgreen;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid silver;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+            color: black;
+        }
+        button {
+            background-color: blue;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: darkblue;
+        }
+        #message {
+            margin-top: 15px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>User Dashboard</h1>
+
+    <div id="userListContainer">
+        <h2>Registered Users</h2>
+        <table id="userTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+            <tbody id="userTableBody">
+                <tr><td colspan="2">Loading users...</td></tr>
+            </tbody>
+        </table>
+        <div id="userListMessage" class="message"></div>
+    </div>
+
+    <div id="addUserForm">
+        <h2>Add New User</h2>
+        <form id="newUserForm">
+            <div class="form-group">
+                <label for="newName">Name:</label>
+                <input type="text" id="newName" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="newEmail">Email:</label>
+                <input type="email" id="newEmail" name="email" required>
+            </div>
+            <button type="submit">Add User</button>
+        </form>
+        <div id="addMessage" class="message"></div>
+    </div>
+
+    <script>
+        const userTableBody = document.getElementById('userTableBody');
+        const userListMessageDiv = document.getElementById('userListMessage');
+        const newUserForm = document.getElementById('newUserForm');
+        const addMessageDiv = document.getElementById('addMessage');
+        const apiUrl = 'https://mockapi.io/users';
+        let currentUsers = [];
+
+        function fetchUsers() {
+            userTableBody.innerHTML = '<tr><td colspan="2">Loading users...</td></tr>';
+            userListMessageDiv.textContent = '';
+            fetch(apiUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch users: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(users => {
+                    currentUsers = users;
+                    renderUsers(users);
+                })
+                .catch(error => {
+                    userListMessageDiv.textContent = error.message;
+                    userListMessageDiv.className = 'error';
+                    userTableBody.innerHTML = '';
+                });
+        }
+
+        function renderUsers(users) {
+            userTableBody.innerHTML = '';
+            if (users.length === 0) {
+                userTableBody.innerHTML = '<tr><td colspan="2">No users registered yet.</td></tr>';
+                return;
+            }
+            users.forEach(user => {
+                const row = userTableBody.insertRow();
+                const nameCell = row.insertCell();
+                const emailCell = row.insertCell();
+                nameCell.textContent = user.name;
+                emailCell.textContent = user.email;
+            });
+        }
+
+        newUserForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const newNameInput = document.getElementById('newName');
+            const newEmailInput = document.getElementById('newEmail');
+
+            const newUser = {
+                name: newNameInput.value,
+                email: newEmailInput.value
+            };
+
+            const isDuplicate = currentUsers.some(user => user.email === newUser.email);
+            if (isDuplicate) {
+                addMessageDiv.textContent = 'Error: User with this email already exists.';
+                addMessageDiv.className = 'error';
+                return;
+            }
+
+            fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(newUser)
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error(`Failed to add user: ${response.status}`);
+                }
+            })
+            .then(data => {
+                addMessageDiv.textContent = 'User added successfully!';
+                addMessageDiv.className = 'success';
+                newUserForm.reset();
+                fetchUsers();
+            })
+            .catch(error => {
+                addMessageDiv.textContent = error.message;
+                addMessageDiv.className = 'error';
+                console.error('Error adding user:', error);
+            });
+        });
+
+        fetchUsers();
+    </script>
+</body>
+</html>
