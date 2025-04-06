@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Pagination</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            background-color: lightgray;
+            color: black;
+        }
+        h1 {
+            text-align: center;
+            color: blue;
+        }
+        #users-container {
+            margin-top: 20px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .user-item {
+            border-bottom: 1px solid silver;
+            padding: 10px 0;
+        }
+        .user-item:last-child {
+            border-bottom: none;
+        }
+        .pagination-buttons {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .pagination-buttons button {
+            padding: 8px 12px;
+            margin: 5px;
+            border: 1px solid gray;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: whitesmoke;
+            color: black;
+        }
+        .pagination-buttons button:hover {
+            background-color: lightblue;
+        }
+        .pagination-buttons button.active {
+            background-color: blue;
+            color: white;
+            border-color: blue;
+        }
+        #message {
+            text-align: center;
+            margin-top: 15px;
+            font-weight: bold;
+            color: red;
+        }
+        #loading {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <h1>User List</h1>
+    <div id="users-container">
+        <p id="loading">Loading users...</p>
+        <ul id="users-list">
+            </ul>
+    </div>
+    <div class="pagination-buttons" id="pagination">
+        </div>
+    <div id="message"></div>
+
+    <script>
+        const usersList = document.getElementById('users-list');
+        const paginationContainer = document.getElementById('pagination');
+        const loadingText = document.getElementById('loading');
+        const messageDiv = document.getElementById('message');
+        const apiUrl = 'https://jsonplaceholder.typicode.com/users';
+        const limit = 6;
+        let currentPage = 1;
+        let totalUsers = 0;
+
+        async function fetchUsers(page) {
+            loadingText.style.display = 'block';
+            usersList.innerHTML = '';
+            messageDiv.textContent = '';
+
+            try {
+                const response = await fetch(`${apiUrl}?_page=${page}&_limit=${limit}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const users = await response.json();
+                totalUsers = parseInt(response.headers.get('X-Total-Count')) || 0;
+                renderUsers(users);
+                renderPaginationButtons();
+                currentPage = page;
+            } catch (error) {
+                messageDiv.textContent = `Failed to fetch users: ${error.message}`;
+                console.error("Fetching users error:", error);
+            } finally {
+                loadingText.style.display = 'none';
+            }
+        }
+
+        function renderUsers(users) {
+            if (users.length === 0) {
+                const listItem = document.createElement('li');
+                listItem.textContent = 'No users found on this page.';
+                usersList.appendChild(listItem);
+                return;
+            }
+            users.forEach(user => {
+                const listItem = document.createElement('li');
+                listItem.classList.add('user-item');
+                listItem.innerHTML = `
+                    <strong>ID:</strong> ${user.id}<br>
+                    <strong>Name:</strong> ${user.name}<br>
+                    <strong>Username:</strong> ${user.username}<br>
+                    <strong>Email:</strong> ${user.email}
+                `;
+                usersList.appendChild(listItem);
+            });
+        }
+
+        function renderPaginationButtons() {
+            paginationContainer.innerHTML = '';
+            const totalPages = Math.ceil(totalUsers / limit);
+
+            for (let i = 1; i <= totalPages; i++) {
+                const button = document.createElement('button');
+                button.textContent = i;
+                button.addEventListener('click', () => {
+                    fetchUsers(i);
+                });
+                if (i === currentPage) {
+                    button.classList.add('active');
+                }
+                paginationContainer.appendChild(button);
+            }
+        }
+
+        fetchUsers(currentPage);
+    </script>
+</body>
+</html>

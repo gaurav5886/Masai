@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todos with Pagination</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            background-color: lightgray;
+            color: black;
+        }
+        h1 {
+            text-align: center;
+            color: blue;
+        }
+        #todos-container {
+            margin-top: 20px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .todo-item {
+            border-bottom: 1px solid silver;
+            padding: 10px 0;
+        }
+        .todo-item:last-child {
+            border-bottom: none;
+        }
+        .pagination-buttons {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .pagination-buttons button {
+            padding: 8px 12px;
+            margin: 5px;
+            border: 1px solid gray;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: whitesmoke;
+            color: black;
+        }
+        .pagination-buttons button:hover {
+            background-color: lightblue;
+        }
+        .pagination-buttons button.active {
+            background-color: blue;
+            color: white;
+            border-color: blue;
+        }
+        #message {
+            text-align: center;
+            margin-top: 15px;
+            font-weight: bold;
+            color: red;
+        }
+        #loading {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <h1>Todo List</h1>
+    <div id="todos-container">
+        <p id="loading">Loading todos...</p>
+        <ul id="todos-list">
+            </ul>
+    </div>
+    <div class="pagination-buttons" id="pagination">
+        </div>
+    <div id="message"></div>
+
+    <script>
+        const todosList = document.getElementById('todos-list');
+        const paginationContainer = document.getElementById('pagination');
+        const loadingText = document.getElementById('loading');
+        const messageDiv = document.getElementById('message');
+        const apiUrl = 'https://jsonplaceholder.typicode.com/todos';
+        const limit = 10;
+        let currentPage = 1;
+        let totalTodos = 0;
+
+        async function fetchTodos(page) {
+            loadingText.style.display = 'block';
+            todosList.innerHTML = '';
+            messageDiv.textContent = '';
+
+            try {
+                const response = await fetch(`${apiUrl}?_page=${page}&_limit=${limit}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const todos = await response.json();
+                totalTodos = parseInt(response.headers.get('X-Total-Count')) || 0;
+                renderTodos(todos);
+                renderPaginationButtons();
+                currentPage = page;
+            } catch (error) {
+                messageDiv.textContent = `Failed to fetch todos: ${error.message}`;
+                console.error("Fetching todos error:", error);
+            } finally {
+                loadingText.style.display = 'none';
+            }
+        }
+
+        function renderTodos(todos) {
+            if (todos.length === 0) {
+                const listItem = document.createElement('li');
+                listItem.textContent = 'No todos found on this page.';
+                todosList.appendChild(listItem);
+                return;
+            }
+            todos.forEach(todo => {
+                const listItem = document.createElement('li');
+                listItem.classList.add('todo-item');
+                listItem.textContent = `${todo.id}. ${todo.title} (Completed: ${todo.completed})`;
+                todosList.appendChild(listItem);
+            });
+        }
+
+        function renderPaginationButtons() {
+            paginationContainer.innerHTML = '';
+            const totalPages = Math.ceil(totalTodos / limit);
+
+            for (let i = 1; i <= totalPages; i++) {
+                const button = document.createElement('button');
+                button.textContent = i;
+                button.addEventListener('click', () => {
+                    fetchTodos(i);
+                });
+                if (i === currentPage) {
+                    button.classList.add('active');
+                }
+                paginationContainer.appendChild(button);
+            }
+        }
+
+        fetchTodos(currentPage);
+    </script>
+</body>
+</html>
