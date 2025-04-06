@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase User List</title>
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+        table {
+            width: 80%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        #error-message {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>User List</h1>
+    <table id="user-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody id="user-table-body">
+            <tr><td colspan="2">Loading users...</td></tr>
+        </tbody>
+    </table>
+    <div id="error-message"></div>
+
+    <script type="module">
+        const firebaseConfig = {
+          apiKey: "YOUR_API_KEY",
+          authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+          databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+          projectId: "YOUR_PROJECT_ID",
+          storageBucket: "YOUR_PROJECT_ID.appspot.com",
+          messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+          appId: "YOUR_APP_ID"
+        };
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const usersRef = ref(database, 'users');
+
+        const userTableBody = document.getElementById('user-table-body');
+        const errorMessageDiv = document.getElementById('error-message');
+
+        get(usersRef)
+          .then((snapshot) => {
+            userTableBody.innerHTML = '';
+            if (snapshot.exists()) {
+              const usersData = snapshot.val();
+              for (const userId in usersData) {
+                const user = usersData[userId];
+                const row = userTableBody.insertRow();
+                const nameCell = row.insertCell();
+                const emailCell = row.insertCell();
+                nameCell.textContent = user.name;
+                emailCell.textContent = user.email;
+              }
+            } else {
+              userTableBody.innerHTML = '<tr><td colspan="2">No users found.</td></tr>';
+            }
+          })
+          .catch((error) => {
+            console.error("Error fetching data:", error);
+            errorMessageDiv.textContent = "Failed to fetch user data. Please check the console for details.";
+            userTableBody.innerHTML = '';
+          });
+    </script>
+</body>
+</html>

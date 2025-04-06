@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase User List (with Delete)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: white;
+            color: black;
+        }
+        h1 {
+            text-align: center;
+        }
+        table {
+            width: 80%;
+            border-collapse: collapse;
+            margin: 20px auto;
+        }
+        th, td {
+            border: 1px solid silver;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: lightgray;
+        }
+        .edit-btn, .delete-btn {
+            background-color: blue;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-right: 5px;
+        }
+        .delete-btn {
+            background-color: red;
+        }
+        #error-message, #update-message {
+            text-align: center;
+            margin-top: 10px;
+        }
+        #error-message {
+            color: red;
+        }
+        #update-message {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <h1>User List</h1>
+    <table id="user-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="user-table-body">
+            <tr><td colspan="3">Loading users...</td></tr>
+        </tbody>
+    </table>
+    <div id="error-message"></div>
+    <div id="update-message"></div>
+
+    <script type="module">
+        const firebaseConfig = {
+          apiKey: "YOUR_API_KEY",
+          authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+          databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+          projectId: "YOUR_PROJECT_ID",
+          storageBucket: "YOUR_PROJECT_ID.appspot.com",
+          messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+          appId: "YOUR_APP_ID"
+        };
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+        import { getDatabase, ref, get, remove } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const usersRef = ref(database, 'users');
+
+        const userTableBody = document.getElementById('user-table-body');
+        const errorMessageDiv = document.getElementById('error-message');
+        const updateMessageDiv = document.getElementById('update-message');
+
+        let currentUsersData = {};
+
+        function displayUsers(users) {
+            userTableBody.innerHTML = '';
+            if (users) {
+                for (const userId in users) {
+                    const user = users[userId];
+                    const row = userTableBody.insertRow();
+                    const nameCell = row.insertCell();
+                    const emailCell = row.insertCell();
+                    const actionsCell = row.insertCell();
+
+                    nameCell.textContent = user.name;
+                    emailCell.textContent = user.email;
+
+                    const editButton = document.createElement('button');
+                    editButton.textContent = 'Edit';
+                    editButton.classList.add('edit-btn');
+                    actionsCell.appendChild(editButton);
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'Delete';
+                    deleteButton.classList.add('delete-btn');
+                    deleteButton.addEventListener('click', () => deleteUser(userId));
+                    actionsCell.appendChild(deleteButton);
+                }
+            } else {
+                userTableBody.innerHTML = '<tr><td colspan="3">No users found.</td></tr>';
+            }
+        }
+
+        function fetchUsers() {
+            userTableBody.innerHTML = '<tr><td colspan="3">Loading users...</td></tr>';
+            errorMessageDiv.textContent = '';
+            updateMessageDiv.textContent = '';
+            get(usersRef)
+                .then((snapshot) => {
+                    if (snapshot.exists()) {
+                        currentUsersData = snapshot.val();
+                        displayUsers(currentUsersData);
+                    } else {
+                        displayUsers(null);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error fetching data:", error);
+                    errorMessageDiv.textContent = "Failed to fetch user data.";
+                    userTableBody.innerHTML = '';
+                });
+        }
+
+        const deleteUser = (key) => {
+            const userRefToDelete = ref(database, `users/${key}`);
+            remove(userRefToDelete)
+                .then(() => {
+                    console.log("User deleted successfully");
+                    updateMessageDiv.textContent = "User deleted successfully!";
+                    updateMessageDiv.className = 'success';
+                    const rowToRemove = Array.from(userTableBody.children).find(row => {
+                        return row.children[2]?.querySelector('.delete-btn')?.getAttribute('listener') === `() => deleteUser('${key}')`;
+                    });
+                    if (rowToRemove) {
+                        userTableBody.removeChild(rowToRemove);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error deleting user:", error);
+                    errorMessageDiv.textContent = "Error deleting user.";
+                    errorMessageDiv.className = 'error';
+                });
+        };
+
+        fetchUsers();
+    </script>
+</body>
+</html>

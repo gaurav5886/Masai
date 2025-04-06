@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add User to Firebase</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: white;
+            color: black;
+        }
+        form {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid gray;
+            border-radius: 5px;
+            width: 300px;
+            background-color: lightgray;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: darkblue;
+        }
+        input[type="text"],
+        input[type="email"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid silver;
+            border-radius: 3px;
+            box-sizing: border-box;
+            color: black;
+        }
+        button[type="submit"] {
+            background-color: blue;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        #message {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Add New User</h1>
+
+    <form id="addUserForm">
+        <div>
+            <label for="name">Name:</label>
+            <input type="text" id="name" required>
+        </div>
+        <div>
+            <label for="email">Email:</label>
+            <input type="email" id="email" required>
+        </div>
+        <button type="submit">Add User</button>
+    </form>
+
+    <div id="message"></div>
+
+    <script type="module">
+        const firebaseConfig = {
+          apiKey: "YOUR_API_KEY",
+          authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+          databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+          projectId: "YOUR_PROJECT_ID",
+          storageBucket: "YOUR_PROJECT_ID.appspot.com",
+          messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+          appId: "YOUR_APP_ID"
+        };
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+        import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const usersRef = ref(database, 'users');
+
+        const addUserForm = document.getElementById('addUserForm');
+        const messageDiv = document.getElementById('message');
+
+        addUserForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const nameInput = document.getElementById('name');
+            const emailInput = document.getElementById('email');
+
+            const name = nameInput.value.trim();
+            const email = emailInput.value.trim();
+
+            if (name && email) {
+                push(usersRef, {
+                    name: name,
+                    email: email
+                })
+                .then(() => {
+                    messageDiv.textContent = "User added successfully!";
+                    messageDiv.className = 'success';
+                    addUserForm.reset();
+                })
+                .catch((error) => {
+                    console.error("Error adding user:", error);
+                    messageDiv.textContent = "Failed to add user. Please try again.";
+                    messageDiv.className = 'error';
+                });
+            } else {
+                messageDiv.textContent = "Please fill in both name and email.";
+                messageDiv.className = 'error';
+            }
+        });
+    </script>
+</body>
+</html>
