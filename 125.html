@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; }
+        nav a { margin-right: 15px; text-decoration: none; }
+        #books-section, #members-section { margin-top: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        #message-container { margin-top: 15px; font-weight: bold; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="#" onclick="showSection('books')">Books</a>
+        <a href="#" onclick="showSection('members')">Members</a>
+    </nav>
+
+    <div id="books-section">
+        <h2>Books</h2>
+        <div id="book-filters"></div>
+        <div id="book-sort"></div>
+        <table id="books-table">
+            <thead>
+                <tr><th>Title</th><th>Author</th><th>Genre</th><th>Year</th><th>Available</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="books-table-body"></tbody>
+        </table>
+        <div id="book-pagination"></div>
+        <h3>Add New Book</h3>
+        <form id="add-book-form">
+            <label for="book-title">Title:</label><input type="text" id="book-title" required><br>
+            <label for="book-author">Author:</label><input type="text" id="book-author" required><br>
+            <button type="submit">Add Book</button>
+        </form>
+    </div>
+
+    <div id="members-section" style="display: none;">
+        <h2>Members</h2>
+        <div id="member-filters"></div>
+        <div id="member-sort"></div>
+        <table id="members-table">
+            <thead>
+                <tr><th>Name</th><th>Membership Date</th><th>Active</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="members-table-body"></tbody>
+        </table>
+        <div id="member-pagination"></div>
+        <h3>Add New Member</h3>
+        <form id="add-member-form">
+            <label for="member-name">Name:</label><input type="text" id="member-name" required><br>
+            <label for="member-date">Membership Date:</label><input type="date" id="member-date" required><br>
+            <label for="member-active">Active:</label><input type="checkbox" id="member-active"><br>
+            <button type="submit">Add Member</button>
+        </form>
+    </div>
+
+    <div id="message-container"></div>
+
+    <script>
+        let db = {
+            "books": [
+                { "id": 1, "title": "Dune", "author": "Frank Herbert", "genre": "Science Fiction", "publishedYear": 1965, "available": true },
+                { "id": 2, "title": "1984", "author": "George Orwell", "genre": "Dystopian", "publishedYear": 1949, "available": false }
+            ],
+            "members": [
+                { "id": 1, "name": "John Doe", "membershipDate": "2023-01-15", "active": true },
+                { "id": 2, "name": "Jane Smith", "membershipDate": "2022-05-23", "active": false }
+            ]
+        };
+        let nextBookId = db.books.length + 1;
+        let nextMemberId = db.members.length + 1;
+        function displayMessage(message, type = 'info') {
+            const messageContainer = document.getElementById('message-container');
+            messageContainer.textContent = message;
+            messageContainer.className = type;
+            setTimeout(() => { messageContainer.textContent = ''; messageContainer.className = ''; }, 3000);
+        }
+        function addBook(event) {
+            event.preventDefault();
+            const title = document.getElementById('book-title').value;
+            const author = document.getElementById('book-author').value;
+            const newBook = { id: nextBookId++, title, author };
+            db.books.push(newBook);
+            displayMessage('Book added successfully!', 'success');
+            fetchBooks();
+            document.getElementById('add-book-form').reset();
+        }
+        function updateBook(id, updatedData) {
+            const index = db.books.findIndex(book => book.id === parseInt(id));
+            if (index !== -1) {
+                db.books[index] = { ...db.books[index], ...updatedData };
+                displayMessage(`Book with ID ${id} updated!`, 'success');
+                fetchBooks();
+            } else {
+                displayMessage(`Book with ID ${id} not found!`, 'error');
+            }
+        }
+        function deleteBook(id) {
+            db.books = db.books.filter(book => book.id !== parseInt(id));
+            displayMessage(`Book with ID ${id} deleted!`, 'success');
+            fetchBooks();
+        }
+        function fetchBooks() {
+            renderBookList(applyFiltersAndSorting(db.books));
+        }
+        function renderBookList(books) {
+            const tbody = document.getElementById('books-table-body');
+            tbody.innerHTML = '';
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedBooks = books.slice(startIndex, endIndex);
+            paginatedBooks.forEach(book => {
+                const row = tbody.insertRow();
+                row.innerHTML = `<td>${book.title}</td><td>${book.author}</td><td>${book.genre}</td><td>${book.publishedYear}</td><td>${book.available ? 'Yes' : 'No'}</td><td><button onclick="startEditBook(${book.id})">Edit</button><button onclick="deleteBook(${book.id})">Delete</button></td>`;
+            });
+            renderBookPagination(books.length);
+        }
+        function addMember(event) {
+            event.preventDefault();
+            const name = document.getElementById('member-name').value;
+            const membershipDate = document.getElementById('member-date').value;
+            const active = document.getElementById('member-active').checked;
+            const newMember = { id: nextMemberId++, name, membershipDate, active };
+            db.members.push(newMember);
+            displayMessage('Member added successfully!', 'success');
+            fetchMembers();
+            document.getElementById('add-member-form').reset();
+        }
+        function updateMember(id, updatedData) {
+            const index = db.members.findIndex(member => member.id === parseInt(id));
+            if (index !== -1) {
+                db.members[index] = { ...db.members[index], ...updatedData };
+                displayMessage(`Member with ID ${id} updated!`, 'success');
+                fetchMembers();
+            } else {
+                displayMessage(`Member with ID ${id} not found!`, 'error');
+            }
+        }
+        function deleteMember(id) {
+            db.members = db.members.filter(member => member.id !== parseInt(id));
+            displayMessage(`Member with ID ${id} deleted!`, 'success');
+            fetchMembers();
+        }
+        function fetchMembers() {
+            renderMemberList(applyFiltersAndSorting(db.members, 'member'));
+        }
+        function renderMemberList(members) {
+            const tbody = document.getElementById('members-table-body');
+            tbody.innerHTML = '';
+            const startIndex = (currentMemberPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedMembers = members.slice(startIndex, endIndex);
+            paginatedMembers.forEach(member => {
+                const row = tbody.insertRow();
+                row.innerHTML = `<td>${member.name}</td><td>${member.membershipDate}</td><td>${member.active ? 'Yes' : 'No'}</td><td><button onclick="startEditMember(${member.id})">Edit</button><button onclick="deleteMember(${member.id})">Delete</button></td>`;
+            });
+            renderMemberPagination(members.length);
+        }
+        let bookFilters = { genre: '', available: '' };
+        let memberFilters = { active: '', joinedInLastYear: false };
+        function applyBookFilters(books) {
+            return books.filter(book =>
+                (bookFilters.genre === '' || book.genre === bookFilters.genre) &&
+                (bookFilters.available === '' || book.available === (bookFilters.available === 'true'))
+            );
+        }
+        function applyMemberFilters(members) {
+            const oneYearAgo = new Date();
+            oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+            return members.filter(member =>
+                (memberFilters.active === '' || member.active === (memberFilters.active === 'true')) &&
+                (!memberFilters.joinedInLastYear || new Date(member.membershipDate) > oneYearAgo)
+            );
+        }
+        let bookSortConfig = { sortBy: 'title', sortOrder: 'asc' };
+        let memberSortConfig = { sortBy: 'name', sortOrder: 'asc' };
+        function sortBooks(books) {
+            return books.sort((a, b) => {
+                const valA = a[bookSortConfig.sortBy];
+                const valB = b[bookSortConfig.sortBy];
+                if (typeof valA === 'string') {
+                    return bookSortConfig.sortOrder === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+                } else {
+                    return bookSortConfig.sortOrder === 'asc' ? valA - valB : valB - valA;
+                }
+            });
+        }
+        function sortMembers(members) {
+            return members.sort((a, b) => {
+                const valA = a[memberSortConfig.sortBy];
+                const valB = b[memberSortConfig.sortBy];
+                if (typeof valA === 'string') {
+                    return memberSortConfig.sortOrder === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+                } else {
+                    return memberSortConfig.sortOrder === 'asc' ? valA - valB : valB - valA;
+                }
+            });
+        }
+        function applyFiltersAndSorting(data, type = 'book') {
+            let filteredData = type === 'book' ? applyBookFilters(data) : applyMemberFilters(data);
+            let sortedData = type === 'book' ? sortBooks(filteredData) : sortMembers(filteredData);
+            return sortedData;
+        }
+        let itemsPerPage = 5;
+        let currentPage = 1;
+        let currentMemberPage = 1;
+        function renderBookPagination(totalItems) {
+            const paginationContainer = document.getElementById('book-pagination');
+            paginationContainer.innerHTML = '';
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            for (let i = 1; i <= totalPages; i++) {
+                const button = document.createElement('button');
+                button.textContent = i;
+                button.addEventListener('click', () => { currentPage = i; fetchBooks(); });
+                paginationContainer.appendChild(button);
+            }
+        }
+        function renderMemberPagination(totalItems) {
+            const paginationContainer = document.getElementById('member-pagination');
+            paginationContainer.innerHTML = '';
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            for (let i = 1; i <= totalPages; i++) {
+                const button = document.createElement('button');
+                button.textContent = i;
+                button.addEventListener('click', () => { currentMemberPage = i; fetchMembers(); });
+                paginationContainer.appendChild(button);
+            }
+        }
+        const STORAGE_KEY_BOOK_FILTERS = 'library_book_filters';
+        const STORAGE_KEY_BOOK_SORT = 'library_book_sort';
+        const STORAGE_KEY_BOOK_PAGE = 'library_book_page';
+        const STORAGE_KEY_MEMBER_FILTERS = 'library_member_filters';
+        const STORAGE_KEY_MEMBER_SORT = 'library_member_sort';
+        const STORAGE_KEY_MEMBER_PAGE = 'library_member_page';
+        const STORAGE_KEY_ITEMS_PER_PAGE = 'library_items_per_page';
+        function loadBookState() {
+            const storedFilters = localStorage.getItem(STORAGE_KEY_BOOK_FILTERS);
+            if (storedFilters) bookFilters = JSON.parse(storedFilters);
+            const storedSort = localStorage.getItem(STORAGE_KEY_BOOK_SORT);
+            if (storedSort) bookSortConfig = JSON.parse(storedSort);
+            const storedPage = localStorage.getItem(STORAGE_KEY_BOOK_PAGE);
+            if (storedPage) currentPage = parseInt(storedPage);
+            const storedPerPage = localStorage.getItem(STORAGE_KEY_ITEMS_PER_PAGE);
+            if (storedPerPage) itemsPerPage = parseInt(storedPerPage);
+        }
+        function saveBookState() {
+            localStorage.setItem(STORAGE_KEY_BOOK_FILTERS, JSON.stringify(bookFilters));
+            localStorage.setItem(STORAGE_KEY_BOOK_SORT, JSON.stringify(bookSortConfig));
+            localStorage.setItem(STORAGE_KEY_BOOK_PAGE, currentPage);
+            localStorage.setItem(STORAGE_KEY_ITEMS_PER_PAGE, itemsPerPage);
+        }
+        function loadMemberState() {
+            const storedFilters = localStorage.getItem(STORAGE_KEY_MEMBER_FILTERS);
+            if (storedFilters) memberFilters = JSON.parse(storedFilters);
+            const storedSort = localStorage.getItem(STORAGE_KEY_MEMBER_SORT);
+            if (storedSort) memberSortConfig = JSON.parse(storedSort);
+            const storedPage = localStorage.getItem(STORAGE_KEY_MEMBER_PAGE);
+            if (storedPage) currentMemberPage = parseInt(storedPage);
+        }
+        function saveMemberState() {
+            localStorage.setItem(STORAGE_KEY_MEMBER_FILTERS, JSON.stringify(memberFilters));
+            localStorage.setItem(STORAGE_KEY_MEMBER_SORT, JSON.stringify(memberSortConfig));
+            localStorage.setItem(STORAGE_KEY_MEMBER_PAGE, currentMemberPage);
+        }
+        function showSection(sectionId) {
+            document.getElementById('books-section').style.display = sectionId === 'books' ? 'block' : 'none';
+            document.getElementById('members-section').style.display = sectionId === 'members' ? 'block' : 'none';
+        }
+        function startEditBook(bookId) {
+            const book = db.books.find(b => b.id === bookId);
+            if (book) {
+                const title = prompt("Enter new title:", book.title);
+                const author = prompt("Enter new author:", book.author);
+                if (title && author) {
+                    updateBook(bookId, { title, author });
+                }
+            }
+        }
+        function startEditMember(memberId) {
+            const member = db.members.find(m => m.id === memberId);
+            if (member) {
+                const name = prompt("Enter new name:", member.name);
+                const membershipDate = prompt("Enter new membership date (YYYY-MM-DD):", member.membershipDate);
+                const activeStr = prompt("Is member active? (true/false):", member.active);
+                const active = activeStr ? activeStr.toLowerCase() === 'true' : member.active;
+                if (name && membershipDate) {
+                    updateMember(memberId, { name, membershipDate, active });
+                }
+            }
+        }
+        loadBookState();
+        loadMemberState();
+        fetchBooks();
+        fetchMembers();
+        document.getElementById('add-book-form').addEventListener('submit', addBook);
+        document.getElementById('add-member-form').addEventListener('submit', addMember);
+        showSection('books');
+    </script>
+</body>
+</html>

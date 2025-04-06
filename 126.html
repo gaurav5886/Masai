@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novel List</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #007bff;
+        }
+        #controls {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        #novel-list {
+            list-style: none;
+            padding: 0;
+        }
+        .novel-item {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        .novel-item strong {
+            font-weight: bold;
+            color: #0056b3;
+        }
+        #message {
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>List of Novels</h1>
+
+    <div id="controls">
+        <div>
+            <label for="filterYear">Filter by Year:</label>
+            <input type="number" id="filterYear" placeholder="Enter year">
+            <button onclick="filterByYear()">Filter</button>
+            <button onclick="clearFilter()">Clear Filter</button>
+        </div>
+        <div>
+            <label for="sortByPrice">Sort by Price:</label>
+            <select id="sortByPrice" onchange="sortByPrice()">
+                <option value="">None</option>
+                <option value="asc">Ascending</option>
+                <option value="desc">Descending</option>
+            </select>
+        </div>
+        <div>
+            <label for="search">Search:</label>
+            <input type="text" id="search" placeholder="Title or Author" oninput="searchNovels(this.value)">
+        </div>
+    </div>
+
+    <ul id="novel-list">
+        <li id="loading" class="novel-item"><strong>Loading novels...</strong></li>
+        <li id="empty" class="novel-item hidden"><strong>No novels found.</strong></li>
+    </ul>
+
+    <div id="message"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.25.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, query, where, orderBy, startAt, endAt } from "https://www.gstatic.com/firebasejs/9.25.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+          apiKey: "YOUR_API_KEY",
+          authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+          projectId: "YOUR_PROJECT_ID",
+          storageBucket: "YOUR_PROJECT_ID.appspot.com",
+          messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+          appId: "YOUR_APP_ID"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const novelsCollection = collection(db, 'novels');
+        const novelListElement = document.getElementById('novel-list');
+        const loadingElement = document.getElementById('loading');
+        const emptyElement = document.getElementById('empty');
+        let allNovels = [];
+
+        async function loadInitialData() {
+            try {
+                const querySnapshot = await getDocs(novelsCollection);
+                allNovels = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderNovels(allNovels);
+                loadingElement.classList.add('hidden');
+            } catch (error) {
+                console.error("Error fetching novels:", error);
+                loadingElement.classList.add('hidden');
+                document.getElementById('message').textContent = "Failed to load novels.";
+            }
+        }
+
+        function renderNovels(novels) {
+            novelListElement.innerHTML = '';
+            if (novels.length === 0) {
+                emptyElement.classList.remove('hidden');
+                return;
+            }
+            emptyElement.classList.add('hidden');
+            novels.forEach(novel => {
+                const listItem = document.createElement('li');
+                listItem.classList.add('novel-item');
+                listItem.innerHTML = `
+                    <strong>Title:</strong> ${novel.title}<br>
+                    <strong>Author:</strong> ${novel.author}<br>
+                    <strong>Price:</strong> $${novel.price}<br>
+                    <strong>Release Year:</strong> ${novel.release_year}<br>
+                    <strong>Genre:</strong> ${novel.genre}
+                `;
+                novelListElement.appendChild(listItem);
+            });
+        }
+
+        async function filterByYear() {
+            const year = document.getElementById('filterYear').value;
+            if (!year) {
+                renderNovels(allNovels);
+                return;
+            }
+            loadingElement.classList.remove('hidden');
+            try {
+                const q = query(novelsCollection, where("release_year", "==", parseInt(year)));
+                const querySnapshot = await getDocs(q);
+                const filteredNovels = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderNovels(filteredNovels);
+            } catch (error) {
+                console.error("Error filtering by year:", error);
+                document.getElementById('message').textContent = "Failed to filter novels.";
+            } finally {
+                loadingElement.classList.add('hidden');
+            }
+        }
+
+        function clearFilter() {
+            document.getElementById('filterYear').value = '';
+            renderNovels(allNovels);
+        }
+
+        async function sortByPrice() {
+            const order = document.getElementById('sortByPrice').value;
+            if (!order) {
+                renderNovels(allNovels);
+                return;
+            }
+            loadingElement.classList.remove('hidden');
+            try {
+                const q = query(novelsCollection, orderBy("price", order));
+                const querySnapshot = await getDocs(q);
+                const sortedNovels = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderNovels(sortedNovels);
+            } catch (error) {
+                console.error("Error sorting by price:", error);
+                document.getElementById('message').textContent = "Failed to sort novels.";
+            } finally {
+                loadingElement.classList.add('hidden');
+            }
+        }
+
+        async function searchNovels(searchTerm) {
+            if (!searchTerm) {
+                renderNovels(allNovels);
+                return;
+            }
+            loadingElement.classList.remove('hidden');
+            const searchTermLower = searchTerm.toLowerCase();
+            const results = allNovels.filter(novel =>
+                novel.title.toLowerCase().includes(searchTermLower) ||
+                novel.author.toLowerCase().includes(searchTermLower)
+            );
+            renderNovels(results);
+            loadingElement.classList.add('hidden');
+        }
+
+        async function populateFirestore() {
+            const novelsData = [
+                { "title": "The Great Adventure", "author": "John Doe", "price": 19.99, "release_year": 2020, "genre": "Adventure" },
+                { "title": "Mystery of the Lost World", "author": "Jane Smith", "price": 15.99, "release_year": 2021, "genre": "Mystery" },
+                { "title": "The Journey Begins", "author": "Mark Johnson", "price": 25.00, "release_year": 2022, "genre": "Fantasy" },
+                { "title": "The Last Escape", "author": "Emily White", "price": 18.50, "release_year": 2019, "genre": "Thriller" }
+            ];
+
+            try {
+                for (const novel of novelsData) {
+                    await addDoc(novelsCollection, novel);
+                    console.log("Novel added:", novel.title);
+                }
+                console.log("All novels added to Firestore!");
+                loadInitialData(); // Reload data after populating
+            } catch (error) {
+                console.error("Error populating Firestore:", error);
+            }
+        }
+
+        // Replace with your Firebase project details
+        const populate = false; // Set to true to populate Firestore with sample data (run once)
+
+        if (populate) {
+            import { addDoc } from "https://www.gstatic.com/firebasejs/9.25.0/firebase-firestore.js";
+            populateFirestore();
+        } else {
+            loadInitialData();
+        }
+
+        function showSection(sectionId) {
+            document.getElementById('novel-list-section').style.display = sectionId === 'novels' ? 'block' : 'none';
+        }
+        showSection('novels');
+    </script>
+</body>
+</html>
